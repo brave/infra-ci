@@ -76,7 +76,7 @@
                 "S3KeyPrefix": "aws-cloudformation-validation-pipeline/v1.0/"
             },
             "SendAnonymousData": {
-                "Enabled": "Yes"
+                "Enabled": "No"
             },
             "AbsoluteBucketName": {
                 "Enabled": "No"
@@ -1817,14 +1817,6 @@
             },
             "Export": {
                 "Name": "GenerateReportLambdaName"
-            }
-        },
-        "CreateStacksLambdaName": {
-            "Value": {
-                "Ref": "CreateStacksLambda"
-            },
-            "Export": {
-                "Name": "CreateStacksLambdaName"
             }
         },
         "AMICheckLambdaName": {
