@@ -65,9 +65,9 @@ resource "aws_cloudformation_stack" "cf_main_pipeline" {
     StackCreationRoleArn = "${aws_iam_role.tf_poweruser.arn}"
     CodeCommitRepoName = "${var.codecommit_name}"
     ApplicationName = "${var.codecommit_name}"
-    CloudflareEmail = "jarv@brave.com"
-    CloudflareParameterName = "<example>"
-    FastlyParameterName = "<example>"
+    CloudflareEmail = "${var.cloudflare_email}"
+    CloudflareParameterName = "${var.cloudflare_param_name}"
+    FastlyParameterName = "${var.fastly_param_name}"
   }
   capabilities = ["CAPABILITY_IAM"]
 

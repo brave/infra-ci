@@ -389,89 +389,6 @@
                         ]
                     },
                     {
-                        "Name": "PreCreateTests",
-                        "Actions": [
-                            {
-                                "InputArtifacts": [
-                                    {
-                                        "Name": "TemplateArtifact"
-                                    }
-                                ],
-                                "Name": "Validate_Template",
-                                "ActionTypeId": {
-                                    "Category": "Invoke",
-                                    "Owner": "AWS",
-                                    "Version": "1",
-                                    "Provider": "Lambda"
-                                },
-                                "OutputArtifacts": [],
-                                "Configuration": {
-                                    "FunctionName": "Validate_Template",
-                                    "UserParameters": {
-                                        "Fn::Sub": [
-                                            "{ \"StackId\": \"${AWS::StackId}\", \"CITestPath\": \"${CITestPath}\", \"ScratchBucket\": \"${ScratchBucket}\" }",
-                                            {
-                                                "CITestPath": {
-                                                    "Fn::FindInMap": [
-                                                        "General",
-                                                        "CIConfig",
-                                                        "CITestPath"
-                                                    ]
-                                                }
-                                            }
-                                        ]
-                                    }
-                                },
-                                "RunOrder": 1
-                            },
-                            {
-                                "Fn::If": [
-                                    "EnablePreCreateTest1",
-                                    {
-                                        "InputArtifacts": [
-                                            {
-                                                "Name": "TemplateArtifact"
-                                            }
-                                        ],
-                                        "Name": {
-                                            "Ref": "PreCreateTest1"
-                                        },
-                                        "ActionTypeId": {
-                                            "Category": "Invoke",
-                                            "Owner": "AWS",
-                                            "Version": "1",
-                                            "Provider": "Lambda"
-                                        },
-                                        "OutputArtifacts": [],
-                                        "Configuration": {
-                                            "FunctionName": {
-                                                "Ref": "PreCreateTest1"
-                                            },
-                                            "UserParameters": {
-                                                "Fn::Sub": [
-                                                    "{ \"StackId\": \"${AWS::StackId}\", \"CITestPath\": \"${CITestPath}\", \"ScratchBucket\": \"${ScratchBucket}\" }",
-                                                    {
-                                                        "CITestPath": {
-                                                            "Fn::FindInMap": [
-                                                                "General",
-                                                                "CIConfig",
-                                                                "CITestPath"
-                                                            ]
-                                                        }
-                                                    }
-                                                ]
-                                            }
-                                        },
-                                        "RunOrder": 2
-                                    },
-                                    {
-                                        "Ref": "AWS::NoValue"
-                                    }
-                                ]
-                            }
-                        ]
-                    },
-                    {
                         "Name": "StackCreation",
                         "Actions": [
                             {
@@ -1017,17 +934,35 @@
                                     "Effect": "Allow"
                                 },
                                 {
-                                    "Effect": "Allow",
+                                    "Action": [
+                                        "s3:GetObject",
+                                        "s3:GetObjectVersion",
+                                        "s3:GetBucketVersioning",
+                                        "s3:ListObjects"
+                                    ],
                                     "Resource": [
                                         {
-                                            "Fn::Sub": "arn:aws:s3:::codepipeline-${AWS::Region}-*"
+                                            "Fn::Sub": "arn:aws:s3:::${ArtifactBucket}"
+                                        },
+                                        {
+                                            "Fn::Sub": "arn:aws:s3:::${ArtifactBucket}/*"
                                         }
                                     ],
+                                    "Effect": "Allow"
+                                },
+                                {
                                     "Action": [
-                                        "s3:PutObject",
-                                        "s3:GetObject",
-                                        "s3:GetObjectVersion"
-                                    ]
+                                        "ssm:GetParameters"
+                                    ],
+                                    "Resource": [
+                                        {
+                                            "Fn::Sub": "arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter${CloudflareParameterName}"
+                                        },
+                                        {
+                                            "Fn::Sub": "arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter${FastlyParameterName}"
+                                        }
+                                    ],
+                                    "Effect": "Allow"
                                 }
                             ]
                         }

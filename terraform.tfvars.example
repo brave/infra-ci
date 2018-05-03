@@ -1,0 +1,11 @@
+region      = "us-east-1"
+account_id  = "111111111111"
+env         = "test"
+
+email_notify    = "example@brave.com"
+codecommit_name = "test"
+branch          = "master"
+
+cloudflare_email      = "example@brave.com"
+cloudflare_param_name = "/MyApp/Env/CLOUDFLARE_TOKEN"
+fastly_param_name     = "/MyApp/Env/FASTLY_API_KEY"

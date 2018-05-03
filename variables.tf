@@ -22,3 +22,16 @@ variable "codecommit_name" {
 variable "branch" {
   description = "Branch to use for pipeline source"
 }
+
+variable "cloudflare_email" {
+  description = "Value to set for CLOUDFLARE_EMAIL in the CodeBuild environment"
+}
+
+variable "cloudflare_param_name" {
+  description = "The SSM parameter name of where to find the CLOUDFLARE_TOKEN secret"
+}
+
+variable "fastly_param_name" {
+  description = "The SSM parameter name of where to find the FASTLY_API_KEY secret"
+}
+
