@@ -60,14 +60,15 @@ resource "aws_cloudformation_stack" "cf_main_pipeline" {
   depends_on = ["aws_cloudformation_stack.central_microservices"]
 
   parameters {
-    EmailPrimary = "${var.email_notify}"
-    SourceRepoBranch = "${var.branch}"
-    StackCreationRoleArn = "${aws_iam_role.tf_poweruser.arn}"
-    CodeCommitRepoName = "${var.codecommit_name}"
-    ApplicationName = "${var.codecommit_name}"
-    CloudflareEmail = "${var.cloudflare_email}"
+    EmailPrimary	    = "${var.email_notify}"
+    SourceRepoBranch	    = "${var.branch}"
+    StackCreationRoleArn    = "${aws_iam_role.tf_poweruser.arn}"
+    CodeCommitRepoName	    = "${var.codecommit_name}"
+    BuildSpec		    = "${var.buildspec}"
+    ApplicationName	    = "${var.codecommit_name}"
+    CloudflareEmail	    = "${var.cloudflare_email}"
     CloudflareParameterName = "${var.cloudflare_param_name}"
-    FastlyParameterName = "${var.fastly_param_name}"
+    FastlyParameterName	    = "${var.fastly_param_name}"
   }
   capabilities = ["CAPABILITY_IAM"]
 

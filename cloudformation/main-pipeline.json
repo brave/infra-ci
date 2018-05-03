@@ -43,8 +43,16 @@
         }
     },
     "Parameters": {
+        "ApplicationName": {
+            "Description": "Application name",
+            "Type": "String"
+        },
         "CodeCommitRepoName": {
             "Description": "Name of CodeCommit Repository to use as pipeline source",
+            "Type": "String"
+        },
+        "BuildSpec": {
+            "Description": "The location to the buildspec.yml file in the source repo",
             "Type": "String"
         },
         "EmailPrimary": {
@@ -82,20 +90,16 @@
             "Type": "String"
         },
         "CloudflareEmail": {
-          "Description": "CloudflareEmail",
+          "Description": "The value for then environment variable CLOUDFLARE_EMAIL",
           "Type": "String"
         },
         "CloudflareParameterName": {
-          "Description": "The parameter store name where to find CloudflareToken",
+          "Description": "The parameter store name where to find the value for CLOUDFLARE_TOKEN",
           "Type": "String"
         },
         "FastlyParameterName": {
-          "Description": "The parameter store name where to find CloudflareToken",
+          "Description": "The parameter store name where to find FASTLY_API_TOKEN",
           "Type": "String"
-        },
-        "ApplicationName": {
-            "Description": "The parameter store name where to find CloudflareToken",
-            "Type": "String"
         }
     },
     "Conditions": {
@@ -1014,7 +1018,10 @@
                     ]
                 },
                 "Source": {
-                    "Type": "CODEPIPELINE"
+                    "Type": "CODEPIPELINE",
+		    "BuildSpec" : {
+			"Fn::Sub": "${BuildSpec}"
+		    }
                 },
                 "TimeoutInMinutes": 10
             }

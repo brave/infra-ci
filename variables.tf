@@ -19,6 +19,11 @@ variable "codecommit_name" {
   description = "Codecommit name used by this pipeline"
 }
 
+variable "buildspec" {
+  description = "The path in the source repo where to find buildspec.yml"
+  default = "./buildspec.yml" 
+}
+
 variable "branch" {
   description = "Branch to use for pipeline source"
 }
