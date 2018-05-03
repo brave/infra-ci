@@ -85,10 +85,6 @@
             "Description": "Name of branch to use as pipeline source",
             "Type": "String"
         },
-        "StackCreationRoleArn": {
-            "Description": "Role used to launch CloudFormation stacks",
-            "Type": "String"
-        },
         "CloudflareEmail": {
           "Description": "The value for then environment variable CLOUDFLARE_EMAIL",
           "Type": "String"
@@ -886,7 +882,7 @@
                     ]
                 },
                 "Path": "/",
-                "Policies": [
+		"Policies": [
                     {
                         "PolicyName": "codebuildrole",
                         "PolicyDocument": {
@@ -971,7 +967,8 @@
                             ]
                         }
                     }
-                ]
+                ],
+		"ManagedPolicyArns": ["arn:aws:iam::aws:policy/ReadOnlyAccess"]
             }
         },
         "TFPlanCodeBuildProject": {

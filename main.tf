@@ -15,31 +15,9 @@ resource "aws_cloudformation_stack" "tf_codebuild" {
     FastlyParameterName = "<example>"
   }
   region     = "${var.region}"
-}
-
-resource "aws_iam_role" "tf_poweruser" {
-  name = "${var.codecommit_name}-${var.env}-tf-poweruser"
-
-  assume_role_policy = <<EOF
-{
-  "Version": "2012-10-17",
-  "Statement": [
-    {
-      "Action": "sts:AssumeRole",
-      "Principal": {
-        "Service": "codebuild.amazonaws.com"
-      },
-      "Effect": "Allow",
-      "Sid": ""
-    }
+  allowed_account_ids = [
+    "${var.account_id}"
   ]
-}
-EOF
-}
-
-resource "aws_iam_role_policy_attachment" "tf_poweruser" {
-  role       = "${aws_iam_role.tf_poweruser.name}"
-  policy_arn = "arn:aws:iam::aws:policy/PowerUserAccess"
 }
 
 resource "aws_cloudformation_stack" "central_microservices" {
@@ -62,7 +40,6 @@ resource "aws_cloudformation_stack" "cf_main_pipeline" {
   parameters {
     EmailPrimary	    = "${var.email_notify}"
     SourceRepoBranch	    = "${var.branch}"
-    StackCreationRoleArn    = "${aws_iam_role.tf_poweruser.arn}"
     CodeCommitRepoName	    = "${var.codecommit_name}"
     BuildSpec		    = "${var.buildspec}"
     ApplicationName	    = "${var.codecommit_name}"
