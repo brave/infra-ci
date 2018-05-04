@@ -1,54 +1,80 @@
 provider "aws" {
-  region     = "us-east-1"
-}
-
-resource "aws_cloudformation_stack" "tf_codebuild" {
-  name = "tf-codebuild"
-
-  parameters {
-    ApplicationName = "<example>"
-    GitHubRepository = "<example>"
-    GitHubBranch = "branch"
-    ArtifactS3Bucket = "<example>"
-    CloudflareEmail = "jarv@example.com"
-    CloudflareParameterName = "<example>"
-    FastlyParameterName = "<example>"
-  }
+  alias      = "root"
   region     = "${var.region}"
   allowed_account_ids = [
     "${var.account_id}"
   ]
 }
 
-resource "aws_cloudformation_stack" "central_microservices" {
-  name = "${var.codecommit_name}-${var.env}-cf-central-microservices"
-
-  parameters {
-    StackCreationRoleArn = "<example>"
+locals {
+  region_codes = {
+    us-east-1 = "usea1"
+    us-east-2 = "usea2"
+    us-west-1 = "uswe1"
+    us-west-2 = "uswe2"
+    us-gov-west-1 = "ugwe2"
+    ca-central-1 = "cace1"
+    eu-west-1 = "euwe1"
+    eu-west-2 = "euwe2"
+    eu-central-1 = "euce1"
+    ap-southeast-1 = "apse1"
+    ap-southeast-2 = "apse2"
+    ap-south-1 = "apso1"
+    ap-northeast-1 = "apne1"
+    ap-northeast-2 = "apne2"
+    sa-east-1 = "saea1"
+    cn-north-1 = "cnno1"
   }
-
-  capabilities = ["CAPABILITY_NAMED_IAM"]
-
-  # Original from: https://s3.amazonaws.com/solutions-reference/aws-cloudformation-validation-pipeline/latest/central-microservices.template
-  template_body = "${file("${path.module}/cloudformation/central-microservices.json")}"
+  region_code = "${local.region_codes[var.region]}"
 }
 
-resource "aws_cloudformation_stack" "cf_main_pipeline" {
-  name = "${var.codecommit_name}-${var.env}-cf-main-pipeline"
-  depends_on = ["aws_cloudformation_stack.central_microservices"]
+resource "aws_organizations_account" "account" {
+  provider  = "aws.root"
+  name      = "${var.appname}-${var.env}"
+  email     = "${var.email_notify}"
+  role_name = "CrossAccountOrgAdmin"
+}
 
-  parameters {
-    EmailPrimary	    = "${var.email_notify}"
-    SourceRepoBranch	    = "${var.branch}"
-    CodeCommitRepoName	    = "${var.codecommit_name}"
-    BuildSpec		    = "${var.buildspec}"
-    ApplicationName	    = "${var.codecommit_name}"
-    CloudflareEmail	    = "${var.cloudflare_email}"
-    CloudflareParameterName = "${var.cloudflare_param_name}"
-    FastlyParameterName	    = "${var.fastly_param_name}"
+resource "aws_organizations_policy" "account" {
+  provider  = "aws.root"
+  name      = "${var.appname}-${var.env}-account"
+
+  content   = <<CONTENT
+{
+  "Version": "2012-10-17",
+  "Statement": {
+    "Effect": "Allow",
+    "Action": "*",
+    "Resource": "*"
   }
-  capabilities = ["CAPABILITY_IAM"]
+}
+CONTENT
+  type = "SERVICE_CONTROL_POLICY"
+}
 
-  # Original from: https://s3.amazonaws.com/solutions-reference/aws-cloudformation-validation-pipeline/latest/main-pipeline.template
-  template_body = "${file("${path.module}/cloudformation/main-pipeline.json")}"
+resource "aws_organizations_policy_attachment" "account" {
+  provider = "aws.root"
+  policy_id = "${aws_organizations_policy.account.id}"
+  target_id = "${aws_organizations_account.account.id}"
+}
+
+provider "aws" {
+  region  = "${var.region}"
+  #profile = "sandbox"
+
+  assume_role {
+    role_arn     = "arn:aws:iam::${aws_organizations_account.account.id}:role/${aws_organizations_account.account.role_name}"
+  }
+}
+
+data "aws_caller_identity" "sub_account" {}
+output "account_id_sub" {
+  value = "${data.aws_caller_identity.sub_account.account_id}"
+}
+
+data "aws_caller_identity" "root_account" {
+  provider = "aws.root"
+}
+output "root_account_id" {
+  value = "${data.aws_caller_identity.root_account.account_id}"
 }

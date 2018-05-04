@@ -7,16 +7,16 @@ variable "account_id" {
   description = "AWS account ID"
 }
 
+variable "appname" {
+  description = "App name"
+}
+
 variable "env" {
   description = "Environment name"
 }
 
 variable "email_notify" {
   description = "Email used to send pipeline results to"
-}
-
-variable "codecommit_name" {
-  description = "Codecommit name used by this pipeline"
 }
 
 variable "buildspec" {

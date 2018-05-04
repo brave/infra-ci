@@ -1,13 +1,6 @@
 ## Infra CI (WIP)
 
-Terraform CI with no external dependencies to AWS. Reasoning for using CloudFormation is that we should be able
-to use it from AWS organizations later to support bootstrapping new services through the control panel. Terraform
-is mainly used here just to make this useful without digging to much into how CloudFormation works.
-
-This does not actually apply the changes.
-
-It also currently this has some extra stuff left over from the AWS CloudFormation CI pipeline this was originally
-inspired by (https://aws.amazon.com/answers/devops/aws-cloudformation-validation-pipeline/).
+Terraform CI with no external dependencies to AWS. This does not actually apply the changes currently.
 
 ### Bootstrap
 

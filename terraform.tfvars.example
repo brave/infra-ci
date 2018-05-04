@@ -3,7 +3,6 @@ account_id  = "111111111111"
 env         = "test"
 
 email_notify    = "example@brave.com"
-codecommit_name = "test"
 branch          = "master"
 
 cloudflare_email      = "example@brave.com"
