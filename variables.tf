@@ -24,6 +24,11 @@ variable "buildspec" {
   default = "./buildspec.yml" 
 }
 
+variable "buildspec_apply" {
+  description = "The path in the source repo where to find buildspec.yml"
+  default = "./buildspec.apply.yml"
+}
+
 variable "branch" {
   description = "Branch to use for pipeline source"
 }

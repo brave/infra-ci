@@ -53,7 +53,10 @@ resource "aws_iam_policy" "codebuild" {
     {
       "Effect": "Allow",
       "Resource": [
-        "${aws_s3_bucket.codebuild.arn}"
+        "${aws_s3_bucket.codebuild.arn}",
+        "${aws_s3_bucket.codebuild.arn}/*",
+        "${aws_s3_bucket.codepipeline.arn}",
+        "${aws_s3_bucket.codepipeline.arn}/*"
       ],
       "Action": [
         "s3:GetObject",
@@ -65,10 +68,9 @@ resource "aws_iam_policy" "codebuild" {
 POLICY
 }
 
-resource "aws_iam_policy_attachment" "codebuild_policy_attachment" {
-  name       = "${local.region_code}-${var.appname}-${var.env}-codebuild"
+resource "aws_iam_role_policy_attachment" "codebuild_plan" {
   policy_arn = "${aws_iam_policy.codebuild.arn}"
-  roles      = ["${aws_iam_role.codebuild.id}"]
+  role       = "${aws_iam_role.codebuild.id}"
 }
 
 resource "aws_iam_role_policy_attachment" "codepipeline_read_all" {
